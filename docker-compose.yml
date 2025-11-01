@@ -1,0 +1,57 @@
+services:
+  # Serviço AirlinesHub
+  airlines_hub:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./airlines_hub:/app
+    ports:
+      - "8001:8001"
+    command: uvicorn main:app --host 0.0.0.0 --port 8001
+    environment:
+      SERVICE_NAME: AirlinesHub
+      
+  # Serviço Exchange
+  exchange:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./exchange:/app
+    ports:
+      - "8002:8002"
+    command: uvicorn main:app --host 0.0.0.0 --port 8002
+    environment:
+      SERVICE_NAME: Exchange
+      
+  # Serviço Fidelity
+  fidelity:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./fidelity:/app
+    ports:
+      - "8003:8003"
+    command: uvicorn main:app --host 0.0.0.0 --port 8003
+    environment:
+      SERVICE_NAME: Fidelity
+
+  # Serviço IMDTravel (Orquestrador)
+  imd_travel:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./imd_travel:/app
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    environment:
+      SERVICE_NAME: IMDTravel
+    # Garante que os serviços dependentes estejam prontos antes de iniciar o IMDTravel
+    depends_on:
+      - airlines_hub
+      - exchange
+      - fidelity
