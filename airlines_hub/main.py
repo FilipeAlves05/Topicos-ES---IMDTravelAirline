@@ -5,6 +5,10 @@ import uuid
 import json
 from datetime import datetime
 
+import random
+import time
+import asyncio
+
 app = FastAPI(title="AirlinesHub", version="1.0.0")
 
 FLIGHTS_DATABASE = {
@@ -24,6 +28,14 @@ FLIGHTS_DATABASE = {
 
 TRANSACTIONS = {}
 
+FLIGHT_FAIL_PROB = 0.2
+CLIENT_TIMEOUT = 10.0
+
+SELL_FAIL_UNTIL = 0.0
+SELL_FAIL_PROB = 0.1
+SELL_FAIL_DURATION = 10.0
+SELL_FAIL_DELAY = 5.0
+
 
 class FlightResponse(BaseModel):
     flight: str
@@ -42,6 +54,10 @@ class SellResponse(BaseModel):
 
 @app.get("/flight", response_model=FlightResponse)
 async def get_flight(flight: str, day: str):
+
+    if random.random() < FLIGHT_FAIL_PROB:
+        await asyncio.sleep(CLIENT_TIMEOUT + 1)
+
     if flight in FLIGHTS_DATABASE and day in FLIGHTS_DATABASE[flight]:
         return FLIGHTS_DATABASE[flight][day]
     else:
@@ -54,6 +70,22 @@ async def get_flight(flight: str, day: str):
 
 @app.post("/sell", response_model=SellResponse)
 async def sell_flight(request: SellRequest):
+
+    global SELL_FAIL_UNTIL
+    current_time = time.time()
+
+    is_failing = False
+
+    if(current_time < SELL_FAIL_UNTIL):
+        is_failing = True
+
+    elif random.random() < SELL_FAIL_PROB:
+        is_failing = True
+        SELL_FAIL_UNTIL = current_time + SELL_FAIL_DURATION
+
+    if is_failing:
+        await asyncio.sleep(SELL_FAIL_DELAY)
+
     transaction_id = str(uuid.uuid4())
 
     TRANSACTIONS[transaction_id] = {
