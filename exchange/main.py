@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import random
 import time
 
@@ -24,7 +24,7 @@ async def convert_currency():
         ERROR_FAIL_UNTIL = current_time + ERROR_FAIL_DURATION
 
     if is_failing:
-        raise HTTPException(status_code = 503, datail="Simulação de erro por falha")
+        raise HTTPException(status_code = 503, detail="Simulação de erro por falha")
 
     exchange_rate = round(random.uniform(5.0, 6.0), 2)
     return {"exchange_rate": exchange_rate}

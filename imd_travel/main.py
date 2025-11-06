@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="IMDTravel", version="1.0.0")
 
-AIRLINES_HUB_URL = "http://localhost:8001"
-EXCHANGE_URL = "http://localhost:8002"
-FIDELITY_URL = "http://localhost:8003"
+AIRLINES_HUB_URL = "http://airlines_hub:8001"
+EXCHANGE_URL = "http://exchange:8002"
+FIDELITY_URL = "http://fidelity:8003"
 
 
 class BuyTicketRequest(BaseModel):

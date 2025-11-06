@@ -1,6 +1,14 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Dict
+import random
+import time
+from fastapi import HTTPException
+
+CRASH_FAIL_PROB = 0.02
+CRASH_FAIL_UNTIL = 0.0
+
+
 
 app = FastAPI(title="Fidelity", version="1.0.0")
 
@@ -19,6 +27,22 @@ class BonusResponse(BaseModel):
 
 @app.post("/bonus", response_model=BonusResponse)
 async def add_bonus(request: BonusRequest):
+
+    global CRASH_FAIL_UNTIL
+    current_time = time.time()
+
+    is_failing = False
+
+    if current_time < CRASH_FAIL_UNTIL:
+        is_failing = True
+
+    elif random.random() < CRASH_FAIL_PROB:
+        is_failing = True
+        CRASH_FAIL_UNTIL = current_time + 1.0
+
+    if is_failing:
+        raise HTTPException(status_code=500, detail="Simulação de falha: Crash")
+
     try:
         if request.user not in USERS_DATABASE:
             USERS_DATABASE[request.user] = 0.0
