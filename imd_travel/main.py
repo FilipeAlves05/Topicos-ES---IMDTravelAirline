@@ -95,7 +95,7 @@ async def buy_ticket(request: BuyTicketRequest):
         logger.error(f"Erro HTTP ao chamar microsserviço: {str(e)}")
         raise HTTPException(
             status_code=502,
-            detail=f"Erro ao comunicar com microsserviço: {str(e)}"
+            detail=f"502 Erro ao comunicar com microsserviço: {str(e)}"
         )
     except Exception as e:
         logger.error(f"Erro inesperado: {str(e)}")
