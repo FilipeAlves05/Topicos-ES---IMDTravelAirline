@@ -8,22 +8,17 @@ from fastapi import HTTPException
 CRASH_FAIL_PROB = 0.02
 CRASH_FAIL_UNTIL = 0.0
 
-
-
 app = FastAPI(title="Fidelity", version="1.0.0")
 
 USERS_DATABASE: Dict[str, float] = {}
-
 
 class BonusRequest(BaseModel):
     user: str
     bonus: int
 
-
 class BonusResponse(BaseModel):
     status: str
     message: str
-
 
 @app.post("/bonus", response_model=BonusResponse)
 async def add_bonus(request: BonusRequest):

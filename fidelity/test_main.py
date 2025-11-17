@@ -11,9 +11,8 @@ async def test_health_check():
 
 @pytest.mark.asyncio
 async def test_get_user_bonus_new_user():
-    # Testa um usuário que ainda não existe
     user_id = "new_user_123"
-    USERS_DATABASE.clear() # Limpa o DB simulado
+    USERS_DATABASE.clear() 
     
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/user/{user_id}")
@@ -25,7 +24,7 @@ async def test_get_user_bonus_new_user():
 async def test_add_bonus():
     user_id = "test_user_456"
     bonus_to_add = 100
-    USERS_DATABASE.clear() # Limpa o DB simulado
+    USERS_DATABASE.clear() 
     
     request_data = {"user": user_id, "bonus": bonus_to_add}
     
@@ -37,18 +36,15 @@ async def test_add_bonus():
     assert response_data["status"] == "success"
     assert response_data["message"] == f"Bônus de {bonus_to_add} creditado para o usuário {user_id}. Saldo total: {float(bonus_to_add)}"
     
-    # Verifica se foi salvo no "banco"
     assert USERS_DATABASE.get(user_id) == float(bonus_to_add)
 
 @pytest.mark.asyncio
 async def test_add_bonus_multiple_times():
     user_id = "test_user_789"
-    USERS_DATABASE.clear() # Limpa o DB simulado
+    USERS_DATABASE.clear() 
     
     async with AsyncClient(app=app, base_url="http://test") as ac:
-        # Primeira adição
         await ac.post("/bonus", json={"user": user_id, "bonus": 50})
-        # Segunda adição
         response = await ac.post("/bonus", json={"user": user_id, "bonus": 75})
 
     assert response.status_code == 200
