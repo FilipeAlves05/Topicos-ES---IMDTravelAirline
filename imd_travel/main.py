@@ -55,7 +55,7 @@ async def buy_ticket(request: BuyTicketRequest):
                 response = await client.get(
                     f"{AIRLINES_HUB_URL}/flight",
                     params={"flight": request.flight, "day": request.day},
-                    timeout=10.0
+                    timeout=15.0
                 )
                 response.raise_for_status()
                 return response.json()
@@ -85,7 +85,7 @@ async def buy_ticket(request: BuyTicketRequest):
             try:
                 exchange_response = await client.get(
                     f"{EXCHANGE_URL}/convert",
-                    timeout=10.0
+                    timeout=15.0
                 )
                 exchange_response.raise_for_status()
                 exchange_data = exchange_response.json()
